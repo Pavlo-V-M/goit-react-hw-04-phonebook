@@ -1,3 +1,71 @@
+import React, { useState, useEffect } from 'react';
+import ContactForm from './contact-form/ContactForm';
+import ContactList from './contact-list/ContactList';
+import Filter from './filter/Filter';
+
+export const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const storedContacts = localStorage.getItem('contacts');
+    if (storedContacts) {
+      setContacts(JSON.parse(storedContacts));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const handleFormStateDataReceiver = (data) => {
+    const { name } = data;
+    const existingContact = contacts.find((contact) => contact.name === name);
+    if (existingContact) {
+      alert(`${name} is already in contacts`);
+      return;
+    }
+    setContacts((prevContacts) => [...prevContacts, data]);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const handleDeleteContact = (name) => {
+    setContacts((prevContacts) =>
+      prevContacts.filter((contact) => contact.name !== name)
+    );
+  };
+
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        alignContent: 'flex-start',
+        padding: 10,
+        color: '#010101',
+      }}
+    >
+      <h1>Phonebook</h1>
+      <ContactForm onReceiver={handleFormStateDataReceiver} />
+      <h2>Contacts</h2>
+      <Filter value={search} onChange={handleSearchChange} />
+      <ContactList contacts={filteredContacts} onDelete={handleDeleteContact} />
+    </div>
+  );
+};
+
+// export default App;
+
+// --------------------------------------------------------------------------
+
 // import React from 'react';
 // import ContactForm from './contact-form/ContactForm';
 // import ContactList from './contact-list/ContactList'; // new import
@@ -117,71 +185,3 @@
 //   );
 //   }
 // };
-
-// --------------------------------------------------------------------------
-
-import React, { useState, useEffect } from 'react';
-import ContactForm from './contact-form/ContactForm';
-import ContactList from './contact-list/ContactList';
-import Filter from './filter/Filter';
-
-export const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [search, setSearch] = useState('');
-
-  useEffect(() => {
-    const storedContacts = localStorage.getItem('contacts');
-    if (storedContacts) {
-      setContacts(JSON.parse(storedContacts));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
-  const handleFormStateDataReceiver = (data) => {
-    const { name } = data;
-    const existingContact = contacts.find((contact) => contact.name === name);
-    if (existingContact) {
-      alert(`${name} is already in contacts`);
-      return;
-    }
-    setContacts((prevContacts) => [...prevContacts, data]);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
-  };
-
-  const handleDeleteContact = (name) => {
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.name !== name)
-    );
-  };
-
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        alignContent: 'flex-start',
-        padding: 10,
-        color: '#010101',
-      }}
-    >
-      <h1>Phonebook</h1>
-      <ContactForm onReceiver={handleFormStateDataReceiver} />
-      <h2>Contacts</h2>
-      <Filter value={search} onChange={handleSearchChange} />
-      <ContactList contacts={filteredContacts} onDelete={handleDeleteContact} />
-    </div>
-  );
-};
-
-// export default App;
