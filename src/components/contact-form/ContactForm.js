@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 
 const ContactForm = ({ onReceiver }) => {
@@ -8,7 +8,7 @@ const ContactForm = ({ onReceiver }) => {
   const nameInputID = nanoid();
   const numberInputID = nanoid();
 
-  const handleChange = event => {
+  const handleChange = (event) => {
     const { name, value } = event.currentTarget;
     if (name === 'name') {
       setName(value);
@@ -17,7 +17,7 @@ const ContactForm = ({ onReceiver }) => {
     }
   };
 
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     const newContact = {
       name: name,
@@ -28,50 +28,34 @@ const ContactForm = ({ onReceiver }) => {
     setContactsNumber('');
   };
 
-  useEffect(() => {
-    const storedContacts = localStorage.getItem('contacts');
-    if (storedContacts) {
-      const parsedContacts = JSON.parse(storedContacts);
-      if (parsedContacts && parsedContacts.length > 0) {
-        const lastContact = parsedContacts[parsedContacts.length - 1];
-        setName(lastContact.name);
-        setContactsNumber(lastContact.number);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify([]));
-  }, []);
+  // useEffect(() => {
+  //   localStorage.setItem('contacts', JSON.stringify(contacts));
+  // }, [contacts]);
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor={nameInputID}>
-        Name
-        <input
-          type="text"
-          name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-          value={name}
-          onChange={handleChange}
-          id={nameInputID}
-        />
-      </label>
-      <label htmlFor={numberInputID}>
-        Number
-        <input
-          type="tel"
-          name="contactsNumber"
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required
-          value={contactsNumber}
-          onChange={handleChange}
-          id={numberInputID}
-        />
-      </label>
+      <label htmlFor={nameInputID}>Name</label>
+      <input
+        type="text"
+        name="name"
+        pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+        title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+        required
+        value={name}
+        onChange={handleChange}
+        id={nameInputID}
+      />
+      <label htmlFor={numberInputID}>Number</label>
+      <input
+        type="tel"
+        name="contactsNumber"
+        pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
+        title="Phone number format: 123-45-67"
+        required
+        value={contactsNumber}
+        onChange={handleChange}
+        id={numberInputID}
+      />
       <button type="submit">Add contact</button>
     </form>
   );

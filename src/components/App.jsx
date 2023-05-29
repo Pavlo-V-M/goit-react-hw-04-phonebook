@@ -4,7 +4,15 @@ import ContactList from './contact-list/ContactList';
 import Filter from './filter/Filter';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+  
+  const [contacts, setContacts] = useState(
+    JSON.parse(window.localStorage.getItem('contacts')) ?? []
+  );
+
+  useEffect(() => {
+    window.localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -43,16 +51,7 @@ export const App = () => {
   );
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        alignContent: 'flex-start',
-        padding: 10,
-        color: '#010101',
-      }}
-    >
+    <div className="AppWrap">
       <h1>Phonebook</h1>
       <ContactForm onReceiver={handleFormStateDataReceiver} />
       <h2>Contacts</h2>
